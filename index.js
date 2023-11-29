@@ -7,11 +7,16 @@ const mongoURI = process.env.MONGO_URI
 const app = express();
 const authRoutes = require('./routes/authRoutes');
 const cookieParser = require('cookie-parser');
+const {requireAuth, checkUser} = require('./middleware/authMiddleware')
 
 //  Middlewares
 app.use(express.json());
 app.use('/auth-services',authRoutes);
 app.use(cookieParser());
+
+//Routes
+app.get('*', checkUser);
+
 
 // DB Connect
  connectDB(mongoURI);
