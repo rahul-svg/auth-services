@@ -2,12 +2,8 @@ const User = require("../models/authUser");
 const jwt = require('jsonwebtoken');
 const createError = require('http-errors')
 const { authSchema } = require('../helpers/validation_schema')
-const {
-  signAccessToken,
-  signRefreshToken,
-  verifyRefreshToken,
-} = require('../helpers/jwt_helper')
-const client = require('../helpers/init_redis')
+const {signAccessToken,signRefreshToken,verifyRefreshToken} = require('../helpers/jwt_helper')
+//const client = require('../helpers/init_redis')
 
 // handle errors
 const handleErrors = (err) => {
@@ -79,6 +75,7 @@ module.exports = {
     try {
       const result = await authSchema.validateAsync(req.body)
       const user = await User.findOne({ email: result.email })
+      console.log(user,"user")
       if (!user) throw createError.NotFound('User not registered')
 
       const isMatch = await user.isValidPassword(result.password)
@@ -110,21 +107,21 @@ module.exports = {
     }
   },
 
-  logout: async (req, res, next) => {
-    try {
-      const { refreshToken } = req.body
-      if (!refreshToken) throw createError.BadRequest()
-      const userId = await verifyRefreshToken(refreshToken)
-      client.DEL(userId, (err, val) => {
-        if (err) {
-          console.log(err.message)
-          throw createError.InternalServerError()
-        }
-        console.log(val)
-        res.sendStatus(204)
-      })
-    } catch (error) {
-      next(error)
-    }
-  },
+  // logout: async (req, res, next) => {
+  //   try {
+  //     const { refreshToken } = req.body
+  //     if (!refreshToken) throw createError.BadRequest()
+  //     const userId = await verifyRefreshToken(refreshToken)
+  //     client.DEL(userId, (err, val) => {
+  //       if (err) {
+  //         console.log(err.message)
+  //         throw createError.InternalServerError()
+  //       }
+  //       console.log(val)
+  //       res.sendStatus(204)
+  //     })
+  //   } catch (error) {
+  //     next(error)
+  //   }
+  // },
 }

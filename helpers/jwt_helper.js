@@ -1,6 +1,6 @@
 const JWT = require('jsonwebtoken')
 const createError = require('http-errors')
-const client = require('./init_redis')
+//const client = require('./init_redis')
 
 module.exports = {
   signAccessToken: (userId) => {
@@ -53,14 +53,14 @@ module.exports = {
           reject(createError.InternalServerError())
         }
 
-        client.SET(userId, token, 'EX', 365 * 24 * 60 * 60, (err, reply) => {
-          if (err) {
-            console.log(err.message)
-            reject(createError.InternalServerError())
-            return
-          }
-          resolve(token)
-        })
+        // client.SET(userId, token, 'EX', 365 * 24 * 60 * 60, (err, reply) => {
+        //   if (err) {
+        //     console.log(err.message)
+        //     reject(createError.InternalServerError())
+        //     return
+        //   }
+        //   resolve(token)
+        // })
       })
     })
   },
@@ -72,15 +72,15 @@ module.exports = {
         (err, payload) => {
           if (err) return reject(createError.Unauthorized())
           const userId = payload.aud
-          client.GET(userId, (err, result) => {
-            if (err) {
-              console.log(err.message)
-              reject(createError.InternalServerError())
-              return
-            }
-            if (refreshToken === result) return resolve(userId)
-            reject(createError.Unauthorized())
-          })
+          // client.GET(userId, (err, result) => {
+          //   if (err) {
+          //     console.log(err.message)
+          //     reject(createError.InternalServerError())
+          //     return
+          //   }
+          //   if (refreshToken === result) return resolve(userId)
+          //   reject(createError.Unauthorized())
+          // })
         }
       )
     })
