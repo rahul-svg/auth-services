@@ -1,2 +1,1 @@
-# food-delivery
 # auth-services
