@@ -1,7 +1,6 @@
 const express = require('express');
 require('dotenv').config();
 const PORT = process.env.PORT || 5000;
-const mongoURI = process.env.MONGO_URI
 const app = express();
 const authRoutes = require('./routes/authRoutes');
 const cookieParser = require('cookie-parser');
@@ -9,17 +8,17 @@ const morgan = require('morgan')
 const createError = require('http-errors')
 require('dotenv').config()
 require('./helpers/init_mongodb')
-const { verifyAccessToken } = require('./helpers/jwt_helper')
-require('./helpers/init_redis')
+const cors = require('cors');
+//require('./helpers/init_redis')
 
 //  Middlewares
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
 app.use(morgan('dev'))
 app.use('/auth-services',authRoutes);
 app.use(cookieParser());
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
 
 
 // Handling 404 Errors
