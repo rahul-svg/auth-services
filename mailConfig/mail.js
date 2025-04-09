@@ -1,5 +1,5 @@
 
-const { sender, mailtrapClient } = require("./mailTrapConfig.js");
+const { transporter } = require("./mailConfig.js");
 const { VERIFICATION_EMAIL_TEMPLATE, PASSWORD_RESET_REQUEST_TEMPLATE } = require("./mailTemplate.js");
 
 const sendEmail = async (email, subject, html) => {
@@ -7,12 +7,12 @@ const sendEmail = async (email, subject, html) => {
     throw new Error("Invalid email address");
   }
 
-  const recipient = [{ email }];
+  // const recipient = [{ email }];
 
   try {
-    const response = await mailtrapClient.send({
-      from: sender,
-      to: recipient,
+    const response = await transporter.sendMail({
+      from: 'onboarding@resend.dev',
+      to: email,
       subject,
       html,
       // category: "Email Verification",

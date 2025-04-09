@@ -1,7 +1,7 @@
 const User = require("../models/authUser");
 const jwt = require("jsonwebtoken");
 const createError = require("http-errors");
-const { authSchema } = require("../helpers/validation_schema");
+const { authRegisterSchema,authLoginSchema } = require("../helpers/validation_schema");
 const {
   signAccessToken,
   signRefreshToken,
@@ -10,7 +10,7 @@ const {
 const {
   sendVerificationEmail,
   sendPasswordResetEmail,
-} = require("../mailTrap/mail");
+} = require("../mailConfig/mail");
 //const client = require('../helpers/init_redis')
 
 // handle errors
@@ -58,12 +58,12 @@ const createToken = (id) => {
 module.exports = {
   register: async (req, res, next) => {
     try {
-      const { email, password } = req.body;
-      if (!email || !password) {
-        return next(createError.BadRequest("Email and password are required"));
+      const { username,email, password } = req.body;
+      if (!email || !password || !username) {
+        return next(createError.BadRequest("Username, Email and password are required"));
       }
 
-      const result = await authSchema.validateAsync(req.body);
+      const result = await authRegisterSchema.validateAsync(req.body);
 
       const doesExist = await User.findOne({ email: result.email });
       if (doesExist) {
@@ -108,7 +108,7 @@ module.exports = {
 
   login: async (req, res, next) => {
     try {
-      const result = await authSchema.validateAsync(req.body);
+      const result = await authLoginSchema.validateAsync(req.body);
       const user = await User.findOne({ email: result.email }).exec();
       if (!user) throw createError.NotFound("User not registered");
 
